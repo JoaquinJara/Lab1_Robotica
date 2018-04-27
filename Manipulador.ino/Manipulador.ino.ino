@@ -19,9 +19,9 @@ void setup() {
   servos[1].attach(9); // Base
   servos[2].attach(10); // Brazo
   servos[3].attach(11); // Antebrazo
-
+  
   servos[0].write(90);
-  servos[1].write(90);
+  servos[1].write(0);
   servos[2].write(30);
   servos[3].write(70);
 }

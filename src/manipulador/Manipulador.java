@@ -103,6 +103,14 @@ public class Manipulador extends javax.swing.JFrame implements
         controlar.addKeyListener(this);
         this.add(controlar);
         
+        
+        JButton esquema = new JButton("Iniciar Esquema");
+        esquema.setSize(150, 30);
+        esquema.setLocation(150, 170);
+        esquema.addMouseListener(this);
+        esquema.setName("esquema");
+        this.add(esquema);
+        
         this.setSize(480, 250);
     }
 
@@ -175,7 +183,7 @@ public class Manipulador extends javax.swing.JFrame implements
             arduino.sendByte(parte);
             arduino.sendByte(operacion);
             arduino.sendByte(angulo);
-
+            System.out.println(operacion);
             if(operacion != 's' && parte > 1) {
                 arduino.sendByte(parte == 2 ? 3 : 2);
                 arduino.sendByte(operacion == '+' ? '-' : '+');
@@ -188,11 +196,19 @@ public class Manipulador extends javax.swing.JFrame implements
     
     @Override
     public void mouseClicked(MouseEvent e) {
+        
         String nombre = e.getComponent().getName();
-        int parte = nombre.charAt(0) - '0';
-        int operacion = nombre.charAt(1);
-        int angulo = Integer.parseInt(angulos[parte].getText());
-        mover(parte, operacion, angulo);
+        System.out.println(nombre);
+        if(nombre.equals("esquema")){
+            esquema();
+            System.out.println("aasdasdds");
+        }
+        else{
+            int parte = nombre.charAt(0) - '0';
+            int operacion = nombre.charAt(1);
+            int angulo = Integer.parseInt(angulos[parte].getText());
+            mover(parte, operacion, angulo);
+        }
     }
 
     @Override
@@ -262,4 +278,122 @@ public class Manipulador extends javax.swing.JFrame implements
 
     @Override
     public void keyReleased(KeyEvent e) {}
+    
+    
+    void movLentoVar(int parte, int func,int angulo,int vel){
+        try{
+            for(int i=0;i<vel;i++){
+            mover(parte,func,angulo/vel);
+            Thread.sleep(1000/vel);}
+            
+        }
+        catch(Exception e){
+            
+        }   
+    }
+    
+   /* void movLentoFijo(int parte,int angulo){
+        try{
+            for
+            
+        }catch(Exception e{
+            
+        }
+    }*/
+    
+    void tomarObjeto(){
+        try{
+            mover(PINZA,'+',50);
+            Thread.sleep(1000);
+            movLentoVar(BRAZO,'+',50,20);
+            movLentoVar(ANTEBRAZO,'-',30,20);
+           
+            mover(PINZA,'-',50);
+            Thread.sleep(1000);
+            movLentoVar(BRAZO,'-',50,5);
+            movLentoVar(ANTEBRAZO,'+',20,10);
+            Thread.sleep(2000);
+        }catch(Exception e){   
+        }   
+    }
+    
+    void dejarObjeto(){
+        try{
+            movLentoVar(BRAZO,'+',40,20);
+            movLentoVar(ANTEBRAZO,'-',20,20);
+            
+            mover(PINZA,'+',50);
+            Thread.sleep(1000);
+            movLentoVar(BRAZO,'-',40,10);
+            movLentoVar(ANTEBRAZO,'+',15,10);
+            }catch(Exception e){   
+        }
+    }
+    
+    void gotoObjeto(int from,int to){
+        int k=0;
+        try{
+            switch (to) {
+                case 1:
+                    k=0;
+                    for (int j=k;j>0;j-=5){
+                    mover(BASE,'s',j);
+                    Thread.sleep(50);}
+                    break;
+                case 2:
+                    k=160;
+                    for (int j=k;j>30;j-=5){
+                    mover(BASE,'s',j);
+                    Thread.sleep(50);}
+                    break;
+                case 3:
+                    k=160;
+                    for (int j=k;j>60;j-=5){
+                    mover(BASE,'s',j);
+                    Thread.sleep(50);}
+                    break;
+                case 4:
+                    
+                    if(from==1) k=0;
+                    else if(from==2) k=30;
+                    else if (from==3) k=60;
+                    for (int j=k;j<160;j+=5){
+                    mover(BASE,'s',j);
+                    Thread.sleep(50);}
+                    break;
+                default:
+                    break;
+            }
+            
+            Thread.sleep(1000);
+        }catch(Exception e){   
+        }
+    }
+    
+    public void esquema(){
+                
+        try{
+            
+            //recoger objeto
+            gotoObjeto(0,1);
+            tomarObjeto();
+            gotoObjeto(1,4);
+            dejarObjeto();
+            
+            gotoObjeto(4,2);
+            tomarObjeto();
+            gotoObjeto(2,4);
+            dejarObjeto();
+            
+            gotoObjeto(4,3);
+            tomarObjeto();
+            gotoObjeto(3,4);
+            dejarObjeto();
+            
+        }catch(Exception e){
+            
+        }
+        
+        
+    }
 }
